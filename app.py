@@ -2,114 +2,101 @@ import streamlit as st
 import opengradient as og
 import asyncio
 
-# --- 1. إعدادات الصفحة والهوية ---
+# --- 1. Page Configuration ---
 st.set_page_config(
     page_title="VeriYield | Verifiable DeFi Intelligence",
     page_icon="🛡️",
     layout="centered"
 )
 
-# --- 2. تصميم CSS متطور (ألوان جذابة وتأثيرات بصرية) ---
+# --- 2. Professional UI Styling (Royal Blue Theme) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@500&display=swap');
     
+    /* Deep Royal Blue Background */
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Inter', sans-serif;
-        background-color: #05070a;
+        background-color: #001529; 
         color: #e4e6eb;
     }
 
-    /* تصميم العناوين */
-    h1 { font-family: 'Orbitron', sans-serif; color: #00ff88 !important; text-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
+    h1 { font-family: 'Orbitron', sans-serif; color: #00ff88 !important; text-align: center; }
     
-    /* تصميم البطاقات والمقاييس (Metrics) */
+    /* Metrics & Cards */
     div[data-testid="stMetric"] { 
-        background: linear-gradient(145deg, #0f131a, #161b22);
-        padding: 25px; 
-        border-radius: 20px; 
+        background-color: #002142;
+        padding: 20px; 
+        border-radius: 16px; 
         border: 1px solid rgba(0, 255, 136, 0.2);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    
-    [data-testid="stMetricValue"] { 
-        color: #00e6ff !important; 
-        font-family: 'Orbitron', sans-serif;
     }
 
-    /* تصميم التبويبات (Tabs) */
+    /* Tabs Styling */
     .stTabs [data-baseweb="tab"] { 
         font-weight: 600; 
-        color: #888a8e; 
-        border-radius: 10px;
-        transition: 0.3s;
+        color: #b0b3b8; 
+        background-color: #002b5c;
+        padding: 10px 20px;
+        border-radius: 12px;
+        margin-right: 8px;
     }
 
     .stTabs [data-baseweb="tab"][aria-selected="true"] { 
-        color: #ffffff !important;
-        background-color: rgba(0, 255, 136, 0.1) !important;
-        border-bottom: 2px solid #00ff88 !important;
+        color: #000000 !important;
+        background-color: #00ff88 !important;
     }
 
-    /* الزر الرئيسي بتأثير متوهج */
+    /* Generator Button */
     div.stButton > button:first-child {
         width: 100%;
         background: linear-gradient(90deg, #00ff88 0%, #00e6ff 100%);
         color: #000000;
         font-weight: 700;
-        font-family: 'Orbitron', sans-serif;
         height: 55px;
-        border-radius: 15px;
+        border-radius: 12px;
         border: none;
-        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2);
-        transition: 0.4s ease;
-    }
-    
-    div.stButton > button:first-child:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
     }
 
-    /* تنسيق صندوق النتائج */
-    .stSuccess {
-        background-color: rgba(0, 255, 136, 0.05) !important;
-        border: 1px solid #00ff88 !important;
-        color: #e4e6eb !important;
+    /* Education Box Styling */
+    .edu-box {
+        background-color: rgba(0, 43, 92, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        border-left: 5px solid #00ff88;
+        margin-bottom: 15px;
     }
+    
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. الهيدر (Header) ---
-st.markdown("<h1 style='text-align: center;'>🛡️ VERIYIELD</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #888a8e; letter-spacing: 2px;'>VERIFIABLE AI YIELD OPTIMIZATION</p>", unsafe_allow_html=True)
+# --- 3. Header Section ---
+st.markdown("<h1>🛡️ VeriYield</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #b0b3b8; letter-spacing: 2px;'>VERIFIABLE AI YIELD OPTIMIZATION</p>", unsafe_allow_html=True)
 st.divider()
 
-# --- 4. التبويبات الرئيسية (Main Tabs) ---
-tab_optimizer, tab_security, tab_market = st.tabs(["🚀 Optimizer", "🔐 Security Proof", "📊 Market Info"])
+# --- 4. Main Tabs Navigation ---
+tab_optimizer, tab_security, tab_edu = st.tabs(["🚀 Optimizer", "🔐 Security Proof", "📚 DeFi Education"])
 
 with tab_optimizer:
     st.markdown("### 💰 Strategy Engine")
     
-    # بطاقة إدخال أنيقة
-    col_input, col_balance = st.columns([2, 1])
-    with col_input:
-        asset = st.text_input("Asset Symbol", value="ETH", placeholder="e.g. BTC, SOL, USDC")
-    with col_balance:
-        st.metric("Estimated Balance", f"1,250.00 {asset}")
+    # Input is empty by default, no ETH pre-filled
+    asset = st.text_input("Asset Symbol", value="", placeholder="Enter asset (e.g. BTC, SOL, USDC)")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
     if st.button("GENERATE SECURE STRATEGY"):
         if not asset.strip():
-            st.error("Please enter a valid asset symbol.")
+            st.warning("Please enter an asset symbol to proceed.")
         else:
-            with st.spinner("Synchronizing with TEE Enclave..."):
+            with st.spinner("Executing Secure Inference in TEE Enclave..."):
                 try:
-                    # جلب المفتاح السري
                     if "OG_PRIVATE_KEY" in st.secrets:
                         PRIVATE_KEY = st.secrets["OG_PRIVATE_KEY"]
                     else:
-                        st.error("System Error: Private Key missing.")
+                        st.error("Missing OG_PRIVATE_KEY in Secrets.")
                         st.stop()
                     
                     llm = og.LLM(private_key=PRIVATE_KEY)
@@ -118,23 +105,22 @@ with tab_optimizer:
                         llm.chat(
                             model=og.TEE_LLM.CLAUDE_SONNET_4_6,
                             messages=[
-                                {"role": "system", "content": "You are VeriYield AI. Provide a professional yield strategy in a table format."},
-                                {"role": "user", "content": f"Create a yield strategy for {asset} with focused risk tiers."}
+                                {"role": "system", "content": "You are VeriYield AI. Provide a professional yield strategy in a markdown table format."},
+                                {"role": "user", "content": f"Create a structured yield strategy for {asset}."}
                             ],
-                            max_tokens=500
+                            max_tokens=400
                         )
                     )
                     
                     text = result.chat_output.get('content') if hasattr(result, 'chat_output') else str(result)
                     
-                    st.success("#### 🎯 AI-Driven Strategy Analysis")
+                    st.success("#### 🎯 AI Strategy Analysis")
                     st.markdown(text)
                     
-                    # عرض برهان الحماية (Proof)
+                    # Cryptographic Proof Expansion
                     tx_hash = getattr(result, 'proof_tx_hash', None)
                     if tx_hash:
-                        with st.expander("🛡️ View Cryptographic Proof"):
-                            st.info("Verified by Trusted Execution Environment (TEE).")
+                        with st.expander("🛡️ View TEE Proof"):
                             st.code(tx_hash, language="plaintext")
                             
                 except Exception as e:
@@ -143,17 +129,33 @@ with tab_optimizer:
 with tab_security:
     st.markdown("### 🔒 Infrastructure Security")
     st.write("""
-    VeriYield ensures that AI-driven financial insights are generated within a **Hardware-Secured Enclave**.
+    VeriYield uses **Trusted Execution Environments (TEE)** to ensure your strategy is 
+    calculated in a private hardware vault.
     """)
-    
-    c1, c2, c3 = st.columns(3)
-    c1.info("**Tamper-Proof**\nAI logic cannot be modified.")
-    c2.info("**Verifiable**\nOn-chain cryptographic signatures.")
-    c3.info("**Private**\nInputs are isolated from the host.")
+    st.info("**Integrity:** The AI logic cannot be modified by anyone.")
+    st.info("**Privacy:** Your inputs are shielded from the cloud provider.")
+    st.image("https://img.icons8.com/nolan/128/security-shield.png", width=100)
 
-with tab_market:
-    st.markdown("### 📊 Market Intelligence")
-    st.info("Live data streams for TVL and APY will be active in the next update.")
+with tab_edu:
+    st.markdown("### 📚 DeFi Intelligence Center")
+    st.write("Essential knowledge for every decentralized investor.")
+    
+    st.markdown("""
+    <div class="edu-box">
+        <h4 style='color:#00ff88; margin-top:0;'>1. Liquidity Provision</h4>
+        <p>Earning fees by providing tokens to decentralized exchanges. Be aware of <b>Impermanent Loss</b> during high volatility.</p>
+    </div>
+    
+    <div class="edu-box">
+        <h4 style='color:#00ff88; margin-top:0;'>2. Staking & Restaking</h4>
+        <p>Securing networks by locking assets to earn rewards. Restaking allows you to earn multiple layers of yield on the same capital.</p>
+    </div>
+
+    <div class="edu-box">
+        <h4 style='color:#00ff88; margin-top:0;'>3. TEE Verification</h4>
+        <p>In a world of deepfakes, TEE (Trusted Execution Environment) provides a digital fingerprint proving that this advice came directly from the AI model, untampered.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.divider()
-st.markdown("<p style='text-align: center; color: #4a4a4a; font-size: 0.8rem;'>VeriYield Alpha v1.0 • Powered by OpenGradient Network</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #5c6370; font-size: 0.8rem;'>VeriYield Alpha v1.1 • Built on OpenGradient Network</p>", unsafe_allow_html=True)
