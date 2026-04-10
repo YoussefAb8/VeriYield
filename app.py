@@ -1,11 +1,11 @@
 import streamlit as st
 import opengradient as og
 import asyncio
-import requests
 
-# --- 1. Page Configuration & Professional Styling ---
-st.set_page_config(page_title="VeriYield Atlantis", page_icon="💠", layout="wide")
+# --- 1. Page Config ---
+st.set_page_config(page_title="VeriYield", page_icon="💠", layout="wide")
 
+# --- 2. Original Design (The Clean Blue Style) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
@@ -20,133 +20,70 @@ st.markdown("""
         font-family: 'Orbitron', sans-serif; 
         color: #00e6ff !important; 
         text-align: center; 
-        font-size: 3rem !important;
-        text-shadow: 0 0 20px rgba(0, 230, 255, 0.4);
-        margin-bottom: 5px;
-    }
-    
-    .subtitle { 
-        text-align: center; 
-        color: #0056e0; 
-        font-family: 'Orbitron';
-        font-size: 0.8rem; 
-        letter-spacing: 5px; 
-        margin-bottom: 40px; 
     }
 
-    /* Professional Table UI */
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin: 20px 0; 
-        background: rgba(0, 230, 255, 0.02);
-    }
-    th { 
-        background-color: #0056e0 !important; 
-        color: white !important; 
-        font-family: 'Orbitron';
-        padding: 12px; 
-        text-align: left;
-    }
-    td { 
-        padding: 12px; 
-        border-bottom: 1px solid rgba(0, 230, 255, 0.1);
+    div[data-testid="stMetric"] {
+        background: rgba(10, 25, 49, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #0056e0;
     }
 
-    /* Executive Button Design */
     div.stButton > button:first-child { 
         width: 100%; 
-        background: linear-gradient(135deg, #0056e0 0%, #00e6ff 100%); 
+        background: linear-gradient(90deg, #0056e0, #00e6ff); 
         color: white; 
-        font-family: 'Orbitron'; 
-        height: 55px; 
-        border-radius: 8px; 
-        border: none; 
-        font-weight: bold;
-        transition: 0.3s ease-in-out;
+        font-family: 'Orbitron';
+        height: 50px;
+        border-radius: 8px;
+        border: none;
     }
-    div.stButton > button:first-child:hover {
-        box-shadow: 0 0 25px rgba(0, 230, 255, 0.7);
-        transform: translateY(-2px);
-    }
-
-    /* Clean up Streamlit UI */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. Real-Time Market Engine ---
-@st.cache_data(ttl=60)
-def fetch_market_prices():
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd"
-        res = requests.get(url, timeout=5).json()
-        return {
-            "BTC": res['bitcoin']['usd'],
-            "ETH": res['ethereum']['usd'],
-            "SOL": res['solana']['usd']
-        }
-    except:
-        return {"BTC": 73200, "ETH": 2250, "SOL": 88}
-
-# --- 3. Main Application Logic ---
+# --- 3. Header ---
 st.markdown("<h1>VeriYield Atlantis</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>SECURE DEFI INTELLIGENCE</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Trustless DeFi Intelligence</p>", unsafe_allow_html=True)
 
-current_prices = fetch_market_prices()
+# --- 4. Main Interface ---
+col1, col2 = st.columns([2, 1])
 
-# Minimalist Selectors
-col_left, col_right = st.columns(2)
-with col_left:
-    selected_asset = st.selectbox("", ["BTC", "ETH", "SOL"], label_visibility="collapsed")
-with col_right:
-    risk_profile = st.select_slider("", options=["Low", "Mid", "High"], label_visibility="collapsed")
+with col1:
+    asset = st.selectbox("Select Asset", ["ETH", "SOL", "BTC"])
+    risk = st.select_slider("Risk Level", options=["Low", "Balanced", "High"])
 
-st.markdown("<br>", unsafe_allow_html=True)
+with col2:
+    st.metric("System Status", "Encrypted", delta="Verified")
 
-if st.button("RUN QUANTITATIVE ANALYSIS"):
-    with st.spinner("Accessing Secure TEE Enclave..."):
+if st.button("Run TEE Inference"):
+    with st.spinner("Executing Secure Strategy..."):
         try:
-            # Initialize OpenGradient SDK
+            # Getting key from Secrets
             sk = st.secrets["OG_PRIVATE_KEY"]
             llm = og.LLM(private_key=sk)
             
-            # Optimized Prompt for a balanced, professional response
-            query = f"""
-            Role: Senior DeFi Strategist.
-            Context: Strategy for {selected_asset} at current price ${current_prices[selected_asset]}. 
-            Selected Risk Focus: {risk_profile}.
-
-            Format Requirements:
-            1. Brief Executive Summary (2 sentences max).
-            2. Comparison Table with columns: | Tier | Protocol | Strategy | Targeted APY |
-            (Provide 3 clear rows: Conservative, Balanced, and Growth).
-            3. Key Security Risks (bullet points).
-            
-            Tone: Institutional, direct, and precise. English only.
-            """
+            # The Original Direct Prompt
+            prompt = f"Provide a {risk} risk yield strategy for {asset}. Focus on APY and Safety."
             
             result = asyncio.run(llm.chat(
                 model=og.TEE_LLM.CLAUDE_SONNET_4_6, 
-                messages=[{"role": "user", "content": query}]
+                messages=[{"role": "user", "content": prompt}]
             ))
             
-            # Rendering Output
-            st.markdown("---")
-            st.markdown("### 📊 Optimized Yield Matrix")
-            response_text = result.chat_output.get('content') if hasattr(result, 'chat_output') else str(result)
-            st.markdown(response_text)
+            st.success("Strategy Generated Successfully")
             
-            # Cryptographic Verification
-            st.caption(f"🛡️ Hardware Verified Proof: {getattr(result, 'proof_tx_hash', 'TEE_SESSION_OK_0x...')}")
-            
+            # Display Result
+            if hasattr(result, 'chat_output'):
+                st.markdown(result.chat_output.get('content'))
+            else:
+                st.markdown(str(result))
+                
+            # Proof Hash
+            if hasattr(result, 'proof_tx_hash'):
+                st.code(result.proof_tx_hash, language="plaintext")
+                
         except Exception as e:
-            st.error("Enclave Connection Error. Please verify your credentials.")
+            st.error(f"Error: {e}")
 
-# Bottom Live Tracker
-st.markdown("<br><br><br>", unsafe_allow_html=True)
-footer_cols = st.columns(3)
-for i, (asset, price) in enumerate(current_prices.items()):
-    footer_cols[i].markdown(f"<div style='text-align:center; border-right: 1px solid #0056e0;'><b>{asset}</b><br>${price:,}</div>", unsafe_allow_html=True)
+st.divider()
+st.caption("Powered by OpenGradient TEE Technology")
