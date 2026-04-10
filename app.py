@@ -3,97 +3,67 @@ import opengradient as og
 import asyncio
 from datetime import datetime
 
-# --- 1. Page Configuration ---
+# --- 1. Page Configuration & Professional Styling ---
 st.set_page_config(
     page_title="VeriYield | 2026 DeFi Intelligence",
     page_icon="🛡️",
     layout="centered"
 )
 
-# --- 2. Advanced CSS (Deep Blue & Neon Green Theme) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@500&display=swap');
     
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Inter', sans-serif;
-        background-color: #001529; /* Deep Blue */
+        background-color: #001529; 
         color: #e4e6eb;
     }
 
     h1 { font-family: 'Orbitron', sans-serif; color: #00ff88 !important; text-align: center; }
     
-    /* Metric Cards */
-    div[data-testid="stMetric"] { 
-        background-color: #002142;
-        padding: 20px; 
-        border-radius: 16px; 
-        border: 1px solid rgba(0, 255, 136, 0.2);
-    }
-
-    /* Tabs Styling */
-    .stTabs [data-baseweb="tab"] { 
-        font-weight: 600; 
-        color: #b0b3b8; 
-        background-color: #002b5c;
-        padding: 10px 20px;
-        border-radius: 12px;
-        margin-right: 8px;
-    }
-
-    .stTabs [data-baseweb="tab"][aria-selected="true"] { 
-        color: #000000 !important;
-        background-color: #00ff88 !important;
-    }
-
-    /* Primary Button */
     div.stButton > button:first-child {
         width: 100%;
         background: linear-gradient(90deg, #00ff88 0%, #00e6ff 100%);
-        color: #000000;
-        font-weight: 700;
-        height: 55px;
-        border-radius: 12px;
-        border: none;
+        color: #000000; font-weight: 700; height: 55px;
+        border-radius: 12px; border: none;
         box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
     }
 
-    /* Info Boxes */
-    .edu-box {
-        background-color: rgba(0, 43, 92, 0.5);
-        border-radius: 12px;
-        padding: 20px;
-        border-left: 5px solid #00ff88;
-        margin-bottom: 15px;
+    .stTabs [data-baseweb="tab"] { 
+        font-weight: 600; color: #b0b3b8; background-color: #002b5c;
+        padding: 10px 20px; border-radius: 12px; margin-right: 8px;
+    }
+    .stTabs [data-baseweb="tab"][aria-selected="true"] { 
+        color: #000000 !important; background-color: #00ff88 !important;
     }
     
-    footer {visibility: hidden;}
+    .edu-box {
+        background-color: rgba(0, 43, 92, 0.5);
+        border-radius: 12px; padding: 20px;
+        border-left: 5px solid #00ff88; margin-bottom: 15px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. Header & Dynamic Date ---
+# --- 2. Header & Date ---
 st.markdown("<h1>🛡️ VeriYield</h1>", unsafe_allow_html=True)
-# Dynamic date reflects the actual current date in 2026
 current_date = datetime.now().strftime("%B %d, %Y")
-st.markdown(f"<p style='text-align: center; color: #b0b3b8; letter-spacing: 2px;'>LIVE DEFI INTELLIGENCE • {current_date}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: #b0b3b8;'>LIVE DEFI INTELLIGENCE • {current_date}</p>", unsafe_allow_html=True)
 st.divider()
 
-# --- 4. Main Tabs Navigation ---
+# --- 3. Main Tabs ---
 tab_optimizer, tab_security, tab_edu = st.tabs(["🚀 Optimizer", "🔐 Security Proof", "📚 DeFi Education"])
 
 with tab_optimizer:
     st.markdown("### 💰 Strategy Engine")
-    
-    # Empty input by default
-    asset = st.text_input("Asset Symbol", value="", placeholder="Enter asset (e.g. BTC, SOL, ETH)")
-
-    st.markdown("<br>", unsafe_allow_html=True)
+    asset = st.text_input("Asset Symbol", value="", placeholder="Enter asset (e.g. BTC, ETH, SOL)")
 
     if st.button("GENERATE VERIFIABLE STRATEGY"):
         if not asset.strip():
             st.warning("Please provide an asset symbol to begin analysis.")
         else:
-            with st.spinner(f"Analyzing {asset} Market Cycles for {current_date}..."):
+            with st.spinner(f"Analyzing {asset} (Top 30 Market Cap) for 2026..."):
                 try:
                     if "OG_PRIVATE_KEY" in st.secrets:
                         PRIVATE_KEY = st.secrets["OG_PRIVATE_KEY"]
@@ -103,26 +73,28 @@ with tab_optimizer:
                     
                     llm = og.LLM(private_key=PRIVATE_KEY)
                     
-                    # 2026 Context-Aware Query
+                    # --- CRITICAL FIX: Setting min_allowance to 0.1 to avoid Error 402 ---
+                    llm.ensure_opg_approval(min_allowance=0.1)
+                    
+                    # Optimized 2026 Context-Aware Query
                     query = f"""
                     Current Date: {current_date}. 
-                    Task: Generate an institutional-grade yield strategy for {asset}.
+                    Task: Generate a professional yield strategy for {asset} within the Top 30 Market Cap scope.
                     
-                    Specifics for 2026:
-                    1. Focus on modern primitives: Liquid Restaking Tokens (LRTs), AI-optimized vaults, and Cross-chain yield aggregators.
-                    2. Provide a 'Market Sentiment' summary for Q2 2026.
-                    3. Output a 'Strategy Matrix' table: | Risk Level | Protocol | Mechanism | Est. APY |
-                    4. Professional, clear, and direct tone. No filler text.
+                    Requirements:
+                    1. Focus on 2026 primitives: LRTs and AI-vaults.
+                    2. Output a 'Strategy Matrix' table: | Risk Level | Protocol | Mechanism | Est. APY |
+                    3. Keep the response highly concise and direct.
                     """
                     
                     result = asyncio.run(
                         llm.chat(
                             model=og.TEE_LLM.CLAUDE_SONNET_4_6,
                             messages=[
-                                {"role": "system", "content": "You are VeriYield AI, an elite DeFi analyst operating in 2026. You provide verifiable, hardware-signed financial intelligence."},
+                                {"role": "system", "content": "You are VeriYield AI, a concise 2026 DeFi analyst providing verifiable financial intelligence."},
                                 {"role": "user", "content": query}
                             ],
-                            max_tokens=600
+                            max_tokens=300 # Reduced from 600 to optimize Gas and avoid payment errors
                         )
                     )
                     
@@ -130,42 +102,30 @@ with tab_optimizer:
                     content = result.chat_output.get('content') if hasattr(result, 'chat_output') else str(result)
                     st.markdown(content)
                     
-                    # Cryptographic TEE Proof
                     tx_hash = getattr(result, 'proof_tx_hash', None)
                     if tx_hash:
                         with st.expander("🛡️ View Hardware Attestation"):
-                            st.info("This response was computed in a Trusted Execution Environment (TEE).")
+                            st.info("Verified by TEE (Trusted Execution Environment).")
                             st.code(tx_hash, language="plaintext")
-                            st.caption(f"Verified Proof Hash • Compiled on {current_date}")
                             
                 except Exception as e:
                     st.error(f"Inference Error: {str(e)}")
+                    st.info("Check if your wallet has OPG tokens for the 0.1 allowance.")
 
 with tab_security:
     st.markdown("### 🔒 2026 Security Standards")
-    st.write("""
-    VeriYield utilizes **OpenGradient TEE (Trusted Execution Environments)** to provide 
-    non-custodial financial intelligence.
-    """)
-    st.info("**Integrity:** AI logic is executed in a hardware-locked enclave.")
-    st.info("**Transparency:** Every strategy is cryptographically signed on the OpenGradient network.")
-    st.image("https://img.icons8.com/nolan/128/security-shield.png", width=100)
+    st.write("VeriYield utilizes OpenGradient TEE to provide tamper-proof financial intelligence.")
+    st.info("Integrity: AI logic is executed in a hardware-locked enclave.")
+    st.info("Transparency: Every strategy is cryptographically signed.")
 
 with tab_edu:
     st.markdown("### 📚 2026 DeFi Intelligence")
-    st.write("Stay ahead of the curve with current market primitives.")
-    
     st.markdown(f"""
     <div class="edu-box">
-        <h4 style='color:#00ff88; margin-top:0;'>The Restaking Standard</h4>
-        <p>In 2026, <b>Liquid Restaking (LRT)</b> has become the base-layer for yield. Users no longer just stake; they secure multiple actively validated services (AVS) simultaneously to maximize capital efficiency.</p>
-    </div>
-    
-    <div class="edu-box">
-        <h4 style='color:#00ff88; margin-top:0;'>AI-Managed Liquidity</h4>
-        <p>Dynamic ranges in DEXs are now managed by TEE-signed AI agents. VeriYield helps you identify which agents are performing optimally without human bias.</p>
+        <h4 style='color:#00ff88; margin-top:0;'>Liquid Restaking (LRT)</h4>
+        <p>In 2026, LRTs are the foundation of yield, allowing capital to secure multiple networks simultaneously.</p>
     </div>
     """, unsafe_allow_html=True)
 
 st.divider()
-st.markdown(f"<p style='text-align: center; color: #5c6370; font-size: 0.8rem;'>VeriYield v2.1 • Certified 2026 Intelligence • {current_date}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: #5c6370; font-size: 0.8rem;'>VeriYield v2.2 • Certified 2026 Intelligence • {current_date}</p>", unsafe_allow_html=True)
