@@ -1,3 +1,4 @@
 streamlit
 opengradient
-requests
+pandas
+plotly
